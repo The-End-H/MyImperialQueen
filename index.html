@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Imperial Queen 🤍 - Carta Especial</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    /* Custom Styling & Animations */
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #08070b;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+    }
+
+    /* Floating Particles Background */
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Dynamic Heartbeat Pulse for Envelope */
+    @keyframes envelopePulse {
+      0%, 100% {
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 15px 25px rgba(211, 47, 47, 0.4));
+      }
+      20% {
+        transform: scale(1.08) rotate(-2deg);
+        filter: drop-shadow(0 20px 35px rgba(255, 75, 75, 0.6));
+      }
+      40% {
+        transform: scale(0.98) rotate(1deg);
+      }
+      60% {
+        transform: scale(1.05) rotate(-1deg);
+      }
+    }
+
+    .pulse-fast {
+      animation: envelopePulse var(--pulse-speed, 1.2s) infinite ease-in-out !important;
+    }
+
+    /* Red 3D Envelope Styles */
+    .envelope-wrapper {
+      position: absolute;
+      width: 220px;
+      height: 150px;
+      cursor: pointer;
+      z-index: 20;
+      transition: top 0.45s cubic-bezier(0.25, 1, 0.5, 1), left 0.45s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s ease;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .envelope-3d {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #d32f2f, #9a0007);
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+      position: relative;
+      perspective: 1000px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Flap Top */
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-top: 85px solid #b71c1c;
+      transform-origin: top;
+      transition: transform 0.6s ease-in-out;
+      z-index: 4;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    /* Flap Bottom & Sides */
+    .envelope-pocket {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 0 0 12px 12px;
+      z-index: 2;
+    }
+
+    .envelope-pocket::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 110px solid #7f0000;
+      border-right: 110px solid #7f0000;
+      border-bottom: 80px solid #8e0000;
+    }
+
+    /* Heart Seal */
+    .heart-seal {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #ffd700, #ff9800);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      z-index: 5;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.8);
+      border: 1px solid #ffe082;
+      transition: transform 0.2s;
+    }
+
+    .envelope-wrapper:hover .heart-seal {
+      transform: translateX(-50%) scale(1.1);
+    }
+
+    /* Vintage Paper Styles */
+    .vintage-paper {
+      background: #fdfaf2;
+      background-image: 
+        linear-gradient(rgba(190, 160, 130, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(230, 100, 100, 0.2) 1px, transparent 1px);
+      background-size: 100% 2.2rem, 100% 100%;
+      background-position: 0 0, 45px 0;
+      color: #2c2523;
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.6),
+        inset 0 0 60px rgba(210, 180, 140, 0.35),
+        inset 0 0 15px rgba(139, 69, 19, 0.15);
+      border: 1px solid #e2d7c5;
+    }
+
+    .letter-content {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.85rem;
+      line-height: 2.2rem;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    /* Floating Pencil Indicator */
+    #pencil-cursor {
+      position: fixed;
+      font-size: 2.2rem;
+      pointer-events: none;
+      z-index: 100;
+      display: none;
+      transition: top 0.04s ease-out, left 0.04s ease-out;
+      transform: translate(-10%, -90%) rotate(-15deg);
+      filter: drop-shadow(3px 5px 4px rgba(0,0,0,0.4));
+    }
+
+    /* Scrollbar styling for paper */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 7px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+      border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c2b29d;
+      border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #a3917a;
+    }
+
+    /* Glow Button Effect */
+    .glow-btn {
+      box-shadow: 0 0 15px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s ease;
+    }
+    .glow-btn:hover {
+      box-shadow: 0 0 25px rgba(37, 211, 102, 0.8);
+      transform: translateY(-2deg);
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen relative overflow-hidden select-none">
+
+  <!-- Particles Canvas -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Stage 1: Chase & Open Envelope -->
+  <div id="stage-intro" class="relative w-full h-screen flex flex-col items-center justify-start pt-12 z-10">
+    
+    <!-- Title Instruction & Progress Counter -->
+    <div class="text-center px-4 z-20">
+      <h1 id="instruction-title" class="text-2xl sm:text-3xl font-semibold tracking-wide text-rose-100 drop-shadow-[0_2px_8px_rgba(255,255,255,0.3)] transition-all duration-300">
+        Abre la carta, es para ti... 🤍
+      </h1>
+      
+      <!-- Counter Badge -->
+      <div class="mt-4 inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2 rounded-full border border-white/20 shadow-lg">
+        <span class="text-xs uppercase tracking-widest text-rose-200">Intentos:</span>
+        <div id="click-dots" class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-rose-500/30 border border-rose-400 transition-all duration-300"></span>
+          <span class="w-3 h-3 rounded-full bg-rose-500/30 border border-rose-400 transition-all duration-300"></span>
+          <span class="w-3 h-3 rounded-full bg-rose-500/30 border border-rose-400 transition-all duration-300"></span>
+          <span class="w-3 h-3 rounded-full bg-rose-500/30 border border-rose-400 transition-all duration-300"></span>
+          <span class="w-3 h-3 rounded-full bg-rose-500/30 border border-rose-400 transition-all duration-300"></span>
+          <span class="w-3 h-3 rounded-full bg-rose-500/30 border border-rose-400 transition-all duration-300"></span>
+        </div>
+        <span id="clicks-text" class="text-sm font-semibold text-rose-300 ml-1">0 / 6</span>
+      </div>
+      
+      <p id="encouragement-text" class="mt-2 text-sm text-rose-200/80 italic min-h-[20px] transition-opacity duration-300">
+        ¡Haz clic en el sobre para intentarlo!
+      </p>
+    </div>
+
+    <!-- 3D Interactive Envelope -->
+    <div id="envelope-container" class="envelope-wrapper pulse-fast">
+      <div class="envelope-3d">
+        <div class="envelope-flap" id="envelope-flap"></div>
+        <div class="envelope-pocket"></div>
+        <div class="heart-seal">🤍</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage 2: Letter Display Screen -->
+  <div id="stage-reading" class="hidden fixed inset-0 w-full h-full bg-black/90 backdrop-blur-lg z-30 flex flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-700">
+    
+    <!-- Top Action Bar -->
+    <div class="w-full max-w-2xl flex items-center justify-between mb-3 px-2 z-40">
+      <div class="flex items-center gap-2 text-rose-200 text-sm font-medium">
+        <span>✨ De H.3.6.9 para Imperial Queen</span>
+      </div>
+      
+      <button id="btn-skip" class="px-4 py-1.5 bg-white/10 hover:bg-white/20 border border-white/25 rounded-full text-xs font-semibold text-white backdrop-blur-md transition-all flex items-center gap-1.5 active:scale-95">
+        <span>Saltar escritura</span>
+        <span>⏭️</span>
+      </button>
+    </div>
+
+    <!-- Vintage Paper Letter Box -->
+    <div id="paper-box" class="vintage-paper w-full max-w-2xl h-[78vh] rounded-xl p-6 sm:p-10 custom-scrollbar overflow-y-auto relative rounded-lg">
+      <div id="letter-body" class="letter-content pl-6 sm:pl-8 pr-2"></div>
+      
+      <!-- End WhatsApp CTA inside paper bottom -->
+      <div id="inline-whatsapp-wrapper" class="hidden mt-8 pt-4 border-t border-amber-900/10 flex flex-col items-center text-center">
+        <p class="font-sans text-xs text-amber-900/60 uppercase tracking-widest mb-3">¿Deseas responder esta carta?</p>
+        <a id="btn-whatsapp" href="https://wa.me/584148416257" target="_blank" rel="noopener noreferrer" class="glow-btn inline-flex items-center gap-3 bg-emerald-600 hover:bg-emerald-500 text-white font-sans font-medium px-6 py-3 rounded-full text-sm sm:text-base">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.882-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.636-.916-2.233-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.572-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+          </svg>
+          <span>Enviar mensaje directo por WhatsApp</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Pencil Cursor -->
+  <div id="pencil-cursor">✏️</div>
+
+  <!-- Branding Logo Hekbel -->
+  <div id="branding-logo" class="fixed bottom-4 right-4 z-50 opacity-0 transition-opacity duration-1000 pointer-events-none">
+    <div class="flex items-center gap-2 bg-black/60 border border-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg shadow-xl">
+      <div class="w-7 h-7 rounded-md bg-gradient-to-tr from-purple-600 to-rose-500 flex items-center justify-center font-bold text-white text-xs">
+        HK
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[10px] uppercase tracking-wider text-gray-400 font-sans">Diseñado por</span>
+        <span class="text-xs font-semibold text-rose-200 tracking-wide font-sans">HEKBEL</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FULL_TEXT = "         N.A.P.C 🖤🤍, No colocare el nombre por que, al estar alojado en la Web, mantener la identidad es lo mas importante, pero tú sabes que es para ti. Imperial Queen 🤍 A lo largo de mi vida jamás imaginé encontrar a alguien que llegara a ser tan importante para mí. Hubo momentos en que éramos un espejismo de felicidad y otros en que, sin querer, nos hacíamos creer que no nos importabamos. Sin embargo, desde el principio hubo una buena conexión que, al menos yo, no creo encontrar en otra persona… tu risa llenaba mis días y tus silencios, auch.... Al principio me costó la distancia, para ser sincero, duele no tenerte cerca. Aunque ya no formamos parte de la vida del otro como antes, no quería dejar pasar este día sin escribirte. No por compromiso, sino porque fuiste y sigues siendo una presencia profunda en mi corazón. Alguien profundamente importante para mí. Aunque el camino nos llevó por distintos rumbos, nunca he dejado de agradecer por haberte conocido. Me enseñaste muchas cosas, con tu intensidad y tu ternura extraña. Hubo un momento en que todo estaba bien y, de pronto, cambió de un día para otro. Y esto va para esa persona que un día fui tan afortunado de conocer: gracias por tu sinceridad, por tu alma transparente y por permitirme admirar tu luz. Siento no haber estado a la altura de tu grandeza; nací para contemplar astros, y tú, Impe 🤍, fuiste la más resplandeciente, tanto que te vi como una llama púrpura y blanca, hermosa y acogedora, pero capaz de herir letalmente, y todo tal vez sin que lo supieras. Obviamente, fue solo una idea, pero siempre se me hacia curioso que te encantara verte en los espejos de la casa; pensaba que tenías todo para hacerlo, ya que, después de ti, lo más bonito era tu reflejo. disculpa por traerlo pero tu primer amor tuvo la suerte de verte florecer; confieso que sentí celos y hoy algo de envidia por ese privilegio. con todo y que tenia los momentos asi fueran solo dos segundos a pesar de sonar a poco tiempo, eran finitos apenas dos segundos podía verte sonreír, rozar tu cabello y transformar mi día. Mis errores fueron dudar, sobrepensar y esperar sin actuar. Expresar lo que se siente no debería romper vínculos fuertes. Hoy, en tu cumpleaños, solo te deseo tu felicidad auténtica, dicha plena, mucha serenidad, proyectos que enciendan tu ilusión, personas que te valoren y motivos para sonreír cada amanecer. Cada recuerdo, todas tus risas y los pocos abrazos vivirán por siempre en lo más íntimo de mi ser. Feliz cumpleaños 🎇🎆🎂🎈🎉, Imperial Queen 🤍. Gracias por haber sido parte de mi historia y por permitirme ser parte de la tuya, aunque fuera por un tiempo. Te quiero mucho 11/06/2019 (no se si llegaras a entender la referencia) 🤍 Ah y déjame dormir 😅 ¿qué te escapaste De bombón? ¿De qué estuche divino? un pedacito de Pareces ángel que se soltó de un cielo te lanzo un travieso y un guiño beso. 🍫 Solo es una carta escrita especialmente para ti, con todo mi cariño... ATT: H.3.6.9";
+
+    const ENCOURAGEMENTS = [
+      "¡Haz clic en el sobre para intentarlo!",
+      "¡Uy, casi! Es escurridiza...",
+      "¡Se vuelve a mover! ¡Sigue intentando!",
+      "¡Su corazón late más rápido!",
+      "¡Un esfuerzo más, ya casi la atrapas!",
+      "¡Último clic para abrir!"
+    ];
+
+    let clickCount = 0;
+    const MAX_CLICKS = 6;
+    let isWriting = false;
+    let textIndex = 0;
+    let typewriterTimeout = null;
+
+    // DOM Elements
+    const envelopeContainer = document.getElementById('envelope-container');
+    const envelopeFlap = document.getElementById('envelope-flap');
+    const instructionTitle = document.getElementById('instruction-title');
+    const clicksText = document.getElementById('clicks-text');
+    const encouragementText = document.getElementById('encouragement-text');
+    const clickDots = document.getElementById('click-dots').children;
+    const stageIntro = document.getElementById('stage-intro');
+    const stageReading = document.getElementById('stage-reading');
+    const paperBox = document.getElementById('paper-box');
+    const letterBody = document.getElementById('letter-body');
+    const pencilCursor = document.getElementById('pencil-cursor');
+    const btnSkip = document.getElementById('btn-skip');
+    const inlineWhatsappWrapper = document.getElementById('inline-whatsapp-wrapper');
+    const brandingLogo = document.getElementById('branding-logo');
+
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + 20;
+        this.size = Math.random() * 12 + 8;
+        this.speedY = Math.random() * 1.2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.opacity = Math.random() * 0.5 + 0.2;
+        this.type = Math.random() > 0.4 ? 'heart' : 'sparkle';
+      }
+      update() {
+        this.y -= this.speedY;
+        this.x += this.speedX;
+        if (this.y < -20) this.reset();
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        if (this.type === 'heart') {
+          ctx.fillStyle = '#f43f5e';
+          ctx.font = `${this.size}px sans-serif`;
+          ctx.fillText('🤍', this.x, this.y);
+        } else {
+          ctx.fillStyle = '#fbbf24';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size / 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 30; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    let audioCtx = null;
+    let heartbeatInterval = null;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Dynamic Synthesized Heartbeat Sound
+    function playHeartbeatBeat(bpm) {
+      if (!audioCtx) return;
+      
+      const now = audioCtx.currentTime;
+
+      // Lub
+      const osc1 = audioCtx.createOscillator();
+      const gain1 = audioCtx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(65, now);
+      osc1.frequency.exponentialRampToValueAtTime(25, now + 0.12);
+      gain1.gain.setValueAtTime(0.7, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc1.connect(gain1);
+      gain1.connect(audioCtx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.12);
+
+      // Dub (slightly delayed)
+      setTimeout(() => {
+        if (!audioCtx) return;
+        const dubNow = audioCtx.currentTime;
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(85, dubNow);
+        osc2.frequency.exponentialRampToValueAtTime(30, dubNow + 0.12);
+        gain2.gain.setValueAtTime(0.5, dubNow);
+        gain2.gain.exponentialRampToValueAtTime(0.001, dubNow + 0.12);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(dubNow);
+        osc2.stop(dubNow + 0.12);
+      }, 160);
+    }
+
+    function updateHeartbeatSpeed() {
+      initAudioContext();
+      if (heartbeatInterval) clearInterval(heartbeatInterval);
+
+      // BPM increases from 60 to 140 bpm as clics increase
+      const bpm = 60 + (clickCount * 15);
+      const intervalMs = (60 / bpm) * 1000;
+      
+      // Update animation speed in CSS
+      envelopeContainer.style.setProperty('--pulse-speed', `${60 / bpm}s`);
+
+      playHeartbeatBeat(bpm);
+      heartbeatInterval = setInterval(() => {
+        playHeartbeatBeat(bpm);
+      }, intervalMs);
+    }
+
+    function stopHeartbeat() {
+      if (heartbeatInterval) clearInterval(heartbeatInterval);
+    }
+
+    // Procedural Typing Key Click Sound
+    function playKeySound() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+
+      // White noise click feel
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(300 + Math.random() * 400, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.03);
+
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(1000, now);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.03);
+    }
+
+    envelopeContainer.addEventListener('click', (e) => {
+      e.stopPropagation();
+      initAudioContext();
+
+      if (clickCount < MAX_CLICKS - 1) {
+        clickCount++;
+        updateProgressUI();
+        moveEnvelopeRandomly();
+        updateHeartbeatSpeed();
+      } else if (clickCount === MAX_CLICKS - 1) {
+        clickCount++;
+        updateProgressUI();
+        openEnvelopeSequence();
+      }
+    });
+
+    function updateProgressUI() {
+      clicksText.textContent = `${clickCount} / ${MAX_CLICKS}`;
+      encouragementText.textContent = ENCOURAGEMENTS[clickCount] || "";
+
+      // Update dot indicators
+      for (let i = 0; i < clickDots.length; i++) {
+        if (i < clickCount) {
+          clickDots[i].classList.remove('bg-rose-500/30');
+          clickDots[i].classList.add('bg-rose-400', 'shadow-[0_0_8px_rgba(251,113,133,0.8)]', 'scale-110');
+        }
+      }
+    }
+
+    function moveEnvelopeRandomly() {
+      const margin = 80;
+      const maxX = window.innerWidth - 240 - margin;
+      const maxY = window.innerHeight - 200 - margin;
+
+      const randomX = Math.max(margin, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(margin + 80, Math.floor(Math.random() * maxY));
+
+      envelopeContainer.style.transform = 'none';
+      envelopeContainer.style.left = `${randomX}px`;
+      envelopeContainer.style.top = `${randomY}px`;
+    }
+
+    function openEnvelopeSequence() {
+      stopHeartbeat();
+      
+      // Stop movement animations
+      envelopeContainer.classList.remove('pulse-fast');
+      envelopeContainer.style.transform = 'translate(-50%, -50%) scale(1.1)';
+      envelopeContainer.style.left = '50%';
+      envelopeContainer.style.top = '50%';
+
+      instructionTitle.textContent = "¡La abriste! ✨";
+      encouragementText.textContent = "Desplegando tu carta...";
+
+      setTimeout(() => {
+        // Open flap
+        envelopeFlap.style.transform = 'rotateX(180deg)';
+      }, 400);
+
+      setTimeout(() => {
+        // Transition to Reading Stage
+        stageIntro.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        setTimeout(() => {
+          stageIntro.style.display = 'none';
+          stageReading.classList.remove('hidden');
+          setTimeout(() => {
+            stageReading.classList.remove('opacity-0');
+            startWriting();
+          }, 50);
+        }, 500);
+      }, 1200);
+    }
+
+    function startWriting() {
+      isWriting = true;
+      pencilCursor.style.display = 'block';
+      writeNextCharacter();
+    }
+
+    function writeNextCharacter() {
+      if (!isWriting) return;
+
+      if (textIndex < FULL_TEXT.length) {
+        const char = FULL_TEXT.charAt(textIndex);
+        const charSpan = document.createElement('span');
+        charSpan.textContent = char;
+        letterBody.appendChild(charSpan);
+
+        // Position pencil cursor next to current letter
+        const rect = charSpan.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          pencilCursor.style.left = `${rect.right + 2}px`;
+          pencilCursor.style.top = `${rect.top + 5}px`;
+        }
+
+        // Play typing audio sound intermittently
+        if (textIndex % 2 === 0 && char.trim() !== '') {
+          playKeySound();
+        }
+
+        // Auto-scroll paper box
+        paperBox.scrollTop = paperBox.scrollHeight;
+
+        textIndex++;
+        typewriterTimeout = setTimeout(writeNextCharacter, 45);
+      } else {
+        finishWriting();
+      }
+    }
+
+    btnSkip.addEventListener('click', () => {
+      if (!isWriting) return;
+      isWriting = false;
+      clearTimeout(typewriterTimeout);
+      letterBody.textContent = FULL_TEXT;
+      finishWriting();
+    });
+
+    function finishWriting() {
+      isWriting = false;
+      pencilCursor.style.display = 'none';
+      btnSkip.style.display = 'none';
+
+      // Reveal inline WhatsApp CTA
+      inlineWhatsappWrapper.classList.remove('hidden');
+      paperBox.scrollTop = paperBox.scrollHeight;
+
+      // Show Hekbel Branding Logo
+      setTimeout(() => {
+        brandingLogo.classList.remove('opacity-0');
+        brandingLogo.classList.add('opacity-100');
+      }, 1500);
+    }
+  </script>
+</body>
+</html>
